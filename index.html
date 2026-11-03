@@ -105,7 +105,7 @@
             transform: translateY(-2px);
         }
 
-        /* الزر المتغير (تصفح مميزات أو لوحة التحكم) */
+        /* الزر المتغير (لوحة التحكم أو تصفح المميزات) */
         .btn-dynamic {
             display: block;
             background: rgba(255, 255, 255, 0.05);
@@ -122,6 +122,25 @@
         .btn-dynamic:hover {
             background: rgba(255, 255, 255, 0.12);
             border-color: #0284c7;
+            transform: translateY(-2px);
+        }
+
+        /* زر تصفح المميزات الإضافي */
+        .btn-features {
+            display: block;
+            background: rgba(0, 119, 255, 0.1);
+            border: 1px solid rgba(0, 119, 255, 0.3);
+            color: #60a5fa;
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: 0.3s;
+        }
+
+        .btn-features:hover {
+            background: rgba(0, 119, 255, 0.2);
             transform: translateY(-2px);
         }
     </style>
@@ -144,9 +163,14 @@
                 إضافة البوت / Add Bot
             </a>
             
-            <!-- الزر المتغير (يتحول تلقائياً لوحة التحكم إذا كان مسجلاً، أو تصفح المميزات إذا لم يكن مسجلاً) -->
-            <a href="/addons" class="btn-dynamic" id="dynamicBtn">
+            <!-- الزر المتغير (يتحول تلقائياً لوحة التحكم إذا كان مسجلاً، أو يوجه لصفحة المميزات إذا لم يكن مسجلاً) -->
+            <a href="addons.html" class="btn-dynamic" id="dynamicBtn">
                 تصفح المميزات / Browse Features
+            </a>
+
+            <!-- زر تصفح المميزات الثابت -->
+            <a href="addons.html" class="btn-features" id="btnFeatureText">
+                استعراض الإضافات / View Addons
             </a>
         </div>
     </div>
@@ -154,7 +178,6 @@
     <script>
         let currentLang = 'ar';
 
-        // التحقق من حالة تسجيل الدخول المحفوظة مسبقاً في متصفح المستخدم
         window.addEventListener('DOMContentLoaded', () => {
             const isLogged = localStorage.getItem('swick_logged_in');
             const dynamicBtn = document.getElementById('dynamicBtn');
@@ -164,7 +187,7 @@
                 dynamicBtn.setAttribute('data-logged', 'true');
                 updateButtonText();
             } else {
-                dynamicBtn.href = '/addons';
+                dynamicBtn.href = 'addons.html';
                 dynamicBtn.removeAttribute('data-logged');
                 updateButtonText();
             }
@@ -195,6 +218,7 @@
             const titleText = document.getElementById('titleText');
             const descText = document.getElementById('descText');
             const btnAddText = document.getElementById('btnAddText');
+            const btnFeatureText = document.getElementById('btnFeatureText');
 
             if (currentLang === 'ar') {
                 currentLang = 'en';
@@ -204,6 +228,7 @@
                 titleText.innerText = 'Welcome To Swick Bot!';
                 descText.innerText = 'Welcome! Swick Bot is here to manage and elevate your Discord server with high performance and security.';
                 btnAddText.innerText = 'Add Bot';
+                btnFeatureText.innerText = 'View Addons';
             } else {
                 currentLang = 'ar';
                 htmlRoot.setAttribute('lang', 'ar');
@@ -212,6 +237,7 @@
                 titleText.innerText = 'Welcome To Swick Bot!';
                 descText.innerText = 'أهلاً بك، بوت سويك يرحب بك لإدارة وتطوير سيرفرك بكل احترافية وأمان تام!';
                 btnAddText.innerText = 'إضافة البوت / Add Bot';
+                btnFeatureText.innerText = 'استعراض الإضافات / View Addons';
             }
             updateButtonText();
         }
