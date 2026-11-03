@@ -26,7 +26,7 @@
             position: relative;
         }
 
-        /* حاوية الملف الشخصي أعلى اليمين */
+        /* بروفايل المستخدم أعلى اليمين (يظهر بعد تسجيل الدخول) */
         .user-profile-header {
             position: absolute;
             top: 20px;
@@ -130,6 +130,8 @@
             border-radius: 50px;
             box-shadow: 0 5px 15px rgba(2, 132, 199, 0.4);
             transition: 0.3s;
+            cursor: pointer;
+            border: none;
         }
 
         .btn-login:hover {
@@ -137,7 +139,7 @@
             opacity: 0.95;
         }
 
-        /* زر لوحة التحكم (يظهر للمسجل) */
+        /* زر لوحة التحكم (يظهر باللون السمائي الغامق بعد التسجيل) */
         .btn-dashboard {
             display: none;
             background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
@@ -155,11 +157,23 @@
             transform: translateY(-2px);
             opacity: 0.95;
         }
+
+        .logout-link {
+            display: block;
+            margin-top: 15px;
+            color: #ef4444;
+            font-size: 13px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            text-decoration: underline;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
 
-    <!-- بروفایل المستخدم أعلى اليمين (يظهر عند تسجيل الدخول) -->
+    <!-- بروفايل المستخدم أعلى اليمين -->
     <div class="user-profile-header" id="userHeader">
         <span id="userName">User</span>
         <img id="userAvatar" src="" alt="Avatar">
@@ -176,15 +190,18 @@
         <p id="descText">أهلاً بك، بوت سويك يرحب بك لإدارة وتطوير سيرفرك بكل احترافية وأمان تام!</p>
         
         <div class="buttons-wrapper">
-            <!-- زر تسجيل الدخول (يختفي إذا كان مسجلاً) -->
-            <a href="/auth/discord" class="btn-login" id="btnLogin">
+            <!-- زر تسجيل الدخول (يطلب الاسم ويسجل الدخول محلياً) -->
+            <button class="btn-login" id="btnLogin" onclick="handleLogin()">
                 تسجيل الدخول / Login
-            </a>
+            </button>
 
-            <!-- زر لوحة التحكم (يظهر إذا كان مسجلاً بلون سمائي غامق) -->
-            <a href="/dashboard" class="btn-dashboard" id="btnDashboard">
+            <!-- زر لوحة التحكم (يظهر للمسجل) -->
+            <a href="dashboard.html" class="btn-dashboard" id="btnDashboard">
                 لوحة التحكم / Dashboard
             </a>
+
+            <!-- زر تسجل خروج صغير إذا أردت إعادة التعيين -->
+            <button class="logout-link" id="btnLogout" style="display:none;" onclick="handleLogout()">تسجيل الخروج / Logout</button>
         </div>
     </div>
 
@@ -192,26 +209,48 @@
         let currentLang = 'ar';
 
         window.addEventListener('DOMContentLoaded', () => {
+            checkLoginState();
+        });
+
+        function handleLogin() {
+            let username = prompt("أدخل اسم حسابك في ديسكورد (Discord Username):");
+            if (username && username.trim() !== "") {
+                localStorage.setItem('swick_logged_in', 'true');
+                localStorage.setItem('swick_username', username);
+                localStorage.setItem('swick_avatar', 'https://cdn.discordapp.com/embed/avatars/0.png');
+                checkLoginState();
+            }
+        }
+
+        function handleLogout() {
+            localStorage.clear();
+            checkLoginState();
+        }
+
+        function checkLoginState() {
             const isLogged = localStorage.getItem('swick_logged_in');
             const username = localStorage.getItem('swick_username');
             const avatar = localStorage.getItem('swick_avatar');
 
             const btnLogin = document.getElementById('btnLogin');
             const btnDashboard = document.getElementById('btnDashboard');
+            const btnLogout = document.getElementById('btnLogout');
             const userHeader = document.getElementById('userHeader');
 
             if (isLogged === 'true') {
                 btnLogin.style.display = 'none';
                 btnDashboard.style.display = 'block';
+                btnLogout.style.display = 'block';
                 userHeader.style.display = 'flex';
                 document.getElementById('userName').innerText = username || 'Discord User';
                 document.getElementById('userAvatar').src = avatar || 'https://cdn.discordapp.com/embed/avatars/0.png';
             } else {
                 btnLogin.style.display = 'block';
                 btnDashboard.style.display = 'none';
+                btnLogout.style.display = 'none';
                 userHeader.style.display = 'none';
             }
-        });
+        }
 
         function toggleLanguage() {
             const htmlRoot = document.getElementById('htmlRoot');
