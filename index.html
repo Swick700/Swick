@@ -22,11 +22,9 @@
             align-items: center;
             color: #ffffff;
             padding: 20px;
-            position: relative;
             overflow-x: hidden;
         }
 
-        /* زر تبديل اللغة أعلى الصفحة */
         .lang-container {
             position: absolute;
             top: 20px;
@@ -55,7 +53,7 @@
             border-radius: 24px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             margin: auto;
         }
 
@@ -83,52 +81,120 @@
             line-height: 1.6;
         }
 
-        .btn-start {
-            display: inline-block;
-            background: linear-gradient(135deg, #0077ff 0%, #0056b3 100%);
+        .buttons-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* زر إضافة البوت (سمائي غامق) */
+        .btn-add {
+            display: block;
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
             color: white;
-            padding: 12px 35px;
+            padding: 12px 20px;
             font-size: 16px;
             font-weight: 700;
             text-decoration: none;
             border-radius: 50px;
-            box-shadow: 0 5px 20px rgba(0, 119, 255, 0.4);
+            box-shadow: 0 5px 15px rgba(2, 132, 199, 0.4);
             transition: 0.3s;
         }
 
-        .btn-start:hover {
-            opacity: 0.9;
+        .btn-add:hover {
+            transform: translateY(-2px);
+        }
+
+        /* الزر المتغير (تصفح مميزات أو لوحة التحكم) */
+        .btn-dynamic {
+            display: block;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: 0.3s;
+        }
+
+        .btn-dynamic:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: #0284c7;
+            transform: translateY(-2px);
         }
     </style>
 </head>
 <body>
 
-    <!-- زر تبديل اللغة -->
     <div class="lang-container">
         <button class="lang-btn" onclick="toggleLanguage()" id="langBtn">English</button>
     </div>
 
     <div class="container">
-        <!-- صورة البوت -->
         <img src="https://e.top4top.io/p_3959i2gtg0.png" alt="Swick Bot Logo" class="bot-image">
         
         <h1 id="titleText">Welcome To Swick Bot!</h1>
         <p id="descText">أهلاً بك، بوت سويك يرحب بك لإدارة وتطوير سيرفرك بكل احترافية وأمان تام!</p>
         
-        <a href="https://discord.com/oauth2/authorize?client_id=1566946193454530591&permissions=8&integration_type=0&scope=bot" target="_blank" class="btn-start" id="btnText">
-            Get Started
-        </a>
+        <div class="buttons-wrapper">
+            <!-- زر إضافة البوت -->
+            <a href="https://discord.com/oauth2/authorize?client_id=1566946193454530591&permissions=8&integration_type=0&scope=bot" target="_blank" class="btn-add" id="btnAddText">
+                إضافة البوت / Add Bot
+            </a>
+            
+            <!-- الزر المتغير (يتحول تلقائياً لوحة التحكم إذا كان مسجلاً، أو تصفح المميزات إذا لم يكن مسجلاً) -->
+            <a href="/addons" class="btn-dynamic" id="dynamicBtn">
+                تصفح المميزات / Browse Features
+            </a>
+        </div>
     </div>
 
     <script>
         let currentLang = 'ar';
+
+        // التحقق من حالة تسجيل الدخول المحفوظة مسبقاً في متصفح المستخدم
+        window.addEventListener('DOMContentLoaded', () => {
+            const isLogged = localStorage.getItem('swick_logged_in');
+            const dynamicBtn = document.getElementById('dynamicBtn');
+
+            if (isLogged === 'true') {
+                dynamicBtn.href = '/dashboard';
+                dynamicBtn.setAttribute('data-logged', 'true');
+                updateButtonText();
+            } else {
+                dynamicBtn.href = '/addons';
+                dynamicBtn.removeAttribute('data-logged');
+                updateButtonText();
+            }
+        });
+
+        function updateButtonText() {
+            const dynamicBtn = document.getElementById('dynamicBtn');
+            const isLogged = dynamicBtn.hasAttribute('data-logged');
+
+            if (currentLang === 'ar') {
+                if (isLogged) {
+                    dynamicBtn.innerText = 'لوحة التحكم / Dashboard';
+                } else {
+                    dynamicBtn.innerText = 'تصفح المميزات / Browse Features';
+                }
+            } else {
+                if (isLogged) {
+                    dynamicBtn.innerText = 'Dashboard';
+                } else {
+                    dynamicBtn.innerText = 'Browse Features';
+                }
+            }
+        }
 
         function toggleLanguage() {
             const htmlRoot = document.getElementById('htmlRoot');
             const langBtn = document.getElementById('langBtn');
             const titleText = document.getElementById('titleText');
             const descText = document.getElementById('descText');
-            const btnText = document.getElementById('btnText');
+            const btnAddText = document.getElementById('btnAddText');
 
             if (currentLang === 'ar') {
                 currentLang = 'en';
@@ -137,7 +203,7 @@
                 langBtn.innerText = 'العربية';
                 titleText.innerText = 'Welcome To Swick Bot!';
                 descText.innerText = 'Welcome! Swick Bot is here to manage and elevate your Discord server with high performance and security.';
-                btnText.innerText = 'Get Started';
+                btnAddText.innerText = 'Add Bot';
             } else {
                 currentLang = 'ar';
                 htmlRoot.setAttribute('lang', 'ar');
@@ -145,8 +211,9 @@
                 langBtn.innerText = 'English';
                 titleText.innerText = 'Welcome To Swick Bot!';
                 descText.innerText = 'أهلاً بك، بوت سويك يرحب بك لإدارة وتطوير سيرفرك بكل احترافية وأمان تام!';
-                btnText.innerText = 'Get Started';
+                btnAddText.innerText = 'إضافة البوت / Add Bot';
             }
+            updateButtonText();
         }
     </script>
 
